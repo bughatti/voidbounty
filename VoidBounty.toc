@@ -1,0 +1,24 @@
+## Interface: 16001
+## Title: |cff00c7ffVoidBounty|r
+## Notes: WoW Forever world PvP: enemy players nearby, who killed you, sightings and tracking shared with your side
+## Author: Vede
+## Version: 0.3.0
+## SavedVariables: VoidBountyDB, VoidPresenceDB
+## SavedVariablesPerCharacter: VoidBountyCharDB, VoidHubCharDB
+## IconTexture: Interface\Icons\INV_Misc_Note_02
+
+WhisperNet.lua
+PresenceBox.lua
+TributeData.lua
+Kills.lua
+Core.lua
+Bus.lua
+Net.lua
+Alert.lua
+Writs.lua
+Tribute.lua
+KillProof.lua
+Demo.lua
+Route.lua
+UI.lua
+VoidHubBundle.lua
