@@ -13,8 +13,8 @@ World PvP in WoW Forever: VoidBounty warns you when enemy players are around, pu
 ## Features
 
 ### The nearby warning
-- A small line near the top of the screen while enemy players are around: **"3 Alliance nearby: Warrior 36, Mage 34, Druid 30"**
-- A player who killed you gets a **red line of their own**, with a warning sound when they show up
+- A red box near the top of the screen while enemy players are around: **"3 Alliance nearby: Warrior 36, Mage 34, Druid 30"**. It **flashes** for a few seconds when someone shows up (**Flash the warning** in Settings turns that off)
+- A player who killed you gets a **red line of their own**, with a warning sound when they show up, and the box keeps flashing while they're near
 - Enemy players are seen from nameplates, your target and your mouse, in the open world (battlegrounds hide who players are, so it stays quiet there)
 - Shift-drag the line to move it
 
@@ -31,6 +31,11 @@ World PvP in WoW Forever: VoidBounty warns you when enemy players are around, pu
 ### Most wanted
 - When a VoidBounty player is killed by an enemy player, your side hears "killed by X". **Most wanted** ranks who's killing your side this week: **Known, Dangerous, Feared, Dread**
 - Only the killer is named. Nobody stores who died
+
+### Your kills
+- Every honorable kill on an enemy player in the open world is listed under **Most wanted**: who it was, their class and level, when and where. It's your own list, kept on your character; nothing about it is sent anywhere
+- An honorable kill means you helped kill them (the game gives the whole group credit), not always the killing blow
+- Battleground and dungeon kills are counted on their own, not listed
 
 ### Bounties: coming soon
 - Wanted posters on the players who killed you, hunters who take them on, and a reward paid in basic vendor goods (never gold). Being tested now; it arrives in an update. The players who kill you today will still be on your list

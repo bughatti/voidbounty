@@ -200,6 +200,15 @@ local NO_CLAIM_ZONES = {
 }
 ns.NO_CLAIM_ZONES = NO_CLAIM_ZONES
 
+-- a kill in the open world (the user, 11-11: "bg stuff really shouldnt be counted"). The reader tags each
+-- kill from the combat log's zone line: map 0/1 = the two continents = "world"; "bg" and "instance"
+-- (dungeons, delves) don't count. Kills from before the tag: battleground names don't count.
+function ns.IsWorldKill(k)
+    if k.where and k.where ~= "" then return k.where == "world" end
+    local z = k.zone or ""
+    return not (z == "Warsong Gulch" or z == "Arathi Basin" or z == "Alterac Valley")
+end
+
 local function validClaim(w, hunter, killT, victim, zone)
     if not w or ns.Status(w) ~= "open" or hunter == w.author then return false end
     if victim ~= w.tguid or not killT or killT < w.posted then return false end
@@ -331,7 +340,7 @@ end
 function ns.ClaimFromLog(k)
     local mine = 0
     for id, w in pairs(ns.Writs()) do
-        if w.hunters and w.hunters[me()] and validClaim(w, me(), k.t, k.victim, k.zone)
+        if w.hunters and w.hunters[me()] and ns.IsWorldKill(k) and validClaim(w, me(), k.t, k.victim, k.zone)
             and k.t >= (w.hunters[me()] - 60) then
             w.claim = { hunter = me(), t = k.t, victim = k.victim, zone = k.zone, firsthand = true, accepted = true }
             local msg = B.Pack("C", id, ("%.3f"):format(k.t), k.victim, k.zone or "")
@@ -532,7 +541,7 @@ function ns.Hall()
     table.sort(top, function(a, b) return a.settled ~= b.settled and a.settled > b.settled or a.claims > b.claims end)
     r.top = top
     local kills, myGUID = 0, UnitGUID("player")
-    for _, k in ipairs(ns.Kills and ns.Kills() or {}) do if k.killer == myGUID then kills = kills + 1 end end
+    for _, k in ipairs(ns.Kills and ns.Kills() or {}) do if k.killer == myGUID and ns.IsWorldKill(k) then kills = kills + 1 end end
     r.kills = kills
     local deaths = 0
     for _, m in pairs(ns.char().marked) do deaths = deaths + (m.kills or 0) end

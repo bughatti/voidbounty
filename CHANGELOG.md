@@ -1,5 +1,10 @@
 # VoidBounty Changelog
 
+## 0.3.1
+
+- **Your kills:** every honorable kill on an enemy player in the open world is listed under Most wanted, with who it was, their class and level, when and where. Your own list, never sent anywhere. Battleground and dungeon kills are counted on their own.
+- **The warning is a red box now, and it flashes** for a few seconds when an enemy player shows up, and the whole time a player who killed you is near. **Flash the warning** in Settings turns the flashing off.
+
 ## 0.3.0
 
 First public release.

@@ -807,17 +807,36 @@ local function hallItems()
                 buttons = { { ns.char().track[x.guid] and "Untrack" or "Track", function() toggleTrack(x.guid) end, "Alert when anyone on your side sees them.", 58 } } }
         end
         items[#items + 1] = { head = true, text = "You" }
-        items[#items + 1] = { text = ns.KILLS and ("Players killed (combat log): |cff55ff55%d|r   ·   Deaths to enemy players: |cffff7777%d|r"):format(r.kills, r.deaths)
-            or ("Deaths to enemy players: |cffff7777%d|r"):format(r.deaths) }
+        local hks = ns.HonorKills and ns.HonorKills() or {}
+        local other = ns.char().hkElsewhere or {}
+        items[#items + 1] = { text = ("Honorable kills in the open world: |cff55ff55%d|r%s   ·   Deaths to enemy players: |cffff7777%d|r"):format(ns.HonorKillCount and ns.HonorKillCount() or #hks,
+            ns.KILLS and ("   ·   killing blows (combat log): |cff55ff55%d|r"):format(r.kills) or "", r.deaths) }
+        if (other.bg or 0) + (other.instance or 0) > 0 then
+            items[#items + 1] = { text = ("|cff888888Not counted: %d in battlegrounds, %d in dungeons.|r"):format(other.bg or 0, other.instance or 0) }
+        end
+        -- your kills, in game: the enemy player who died just before the honorable kill
+        items[#items + 1] = { head = true, text = "Your kills (honorable kills in the open world)" }
+        if #hks == 0 then items[#items + 1] = { text = "|cff888888None yet. An honorable kill on an enemy player in the open world lands here right away.|r" } end
+        for i = #hks, math.max(1, #hks - 11), -1 do
+            local k = hks[i]
+            local blow = ns.KillingBlow and ns.KillingBlow(k)
+            items[#items + 1] = { cls = k.class or "",
+                text = ("%s  %s|cff999999%s · %s|r%s"):format(k.name and ("|cffff5555" .. k.name .. "|r") or "|cff888888someone you didn't see die|r",
+                    k.name and (ns.Who({ class = k.class, level = k.level }) .. "  ") or "", date("%m-%d %H:%M", k.t), k.zone or "?",
+                    blow and "  |cffffd27akilling blow|r" or ""),
+                buttons = k.guid and { { ns.char().track[k.guid] and "Untrack" or "Track", function() toggleTrack(k.guid) end, "Alert when anyone on your side sees them.", 58 } } or nil }
+        end
         if ns.KILLS then
             local list = {}
             for _, k in ipairs(ns.Kills()) do if k.killer == UnitGUID("player") then list[#list + 1] = k end end
             table.sort(list, function(a, b) return a.t > b.t end)
-            items[#items + 1] = { head = true, text = "Your kills (from your combat log)" }
+            items[#items + 1] = { head = true, text = "Killing blows (from your combat log; only the open world counts)" }
             if #list == 0 then items[#items + 1] = { text = "|cff888888None yet. A kill shows here after a /reload.|r" } end
             for i = 1, math.min(10, #list) do
                 local k = list[i]
-                items[#items + 1] = { text = ("|cffff5555%s|r  |cff999999%s · %s|r"):format(k.name or "?", date("%m-%d %H:%M", math.floor(k.t)), k.zone or "?") }
+                local world = ns.IsWorldKill(k)
+                items[#items + 1] = { text = ("%s%s|r  |cff999999%s · %s%s|r"):format(world and "|cffff5555" or "|cff888888", k.name or "?",
+                    date("%m-%d %H:%M", math.floor(k.t)), k.zone or "?", world and "" or (k.where == "instance" and " · dungeon, not counted" or " · battleground, not counted")) }
             end
         end
         return items
@@ -853,6 +872,7 @@ local function buildSettings(parent)
     local OPTS = {
         { "alerts", "Nearby warning", "A small line near the top of the screen while enemy players are around (Shift-drag it to move it). Red for players who killed you." },
         { "sound", "Sound for Marked and Tracked players", "A warning sound when a player who killed you shows up, or a tracked player is spotted." },
+        { "flash", "Flash the warning", "The warning box flashes red for a few seconds when an enemy player shows up, and the whole time a player who killed you is near.", true },
         { "quiet", "Show unmarked enemies too", "One quiet line for other enemy players: \"3 Alliance nearby: ...\"." },
         ns.KILLS and { "autolog", "Auto combat log", "On while you're PvP-flagged in the world (it's how your kills are proven), off 5 minutes after. Never touches a log something else started.", true } or nil,
         { "shareSeen", "Share my sightings with my side", "Enemy players you see are sent to other VoidBounty players of your faction (name, level, class, zone and a rough area, never a live position)." },
@@ -860,7 +880,7 @@ local function buildSettings(parent)
     }
     do   -- drop the nil hole (autolog when writs are off)
         local packed = {}
-        for i = 1, 6 do if OPTS[i] then packed[#packed + 1] = OPTS[i] end end
+        for i = 1, table.maxn(OPTS) do if OPTS[i] then packed[#packed + 1] = OPTS[i] end end
         OPTS = packed
     end
     for i, o in ipairs(OPTS) do

@@ -58,7 +58,8 @@ function ns.realChar()
     if c.shareDeaths == nil then c.shareDeaths = true end  -- notoriety: "killed by X" to my side (the user: on by default)
     if c.alerts == nil then c.alerts = true end          -- the nearby line
     if c.sound == nil then c.sound = true end            -- a sound when a Marked player shows up
-    if c.quiet == nil then c.quiet = true end            -- unmarked enemies: one quiet line
+    if c.quiet == nil then c.quiet = true end
+    if c.flash == nil then c.flash = true end            -- the red box flashes (the user, 11-11)            -- unmarked enemies: one quiet line
     return c
 end
 
@@ -110,6 +111,7 @@ local function isEnemy(unit)
     if not fac or secret(fac) then return false end
     return fac ~= myFaction and (fac == "Alliance" or fac == "Horde")
 end
+ns.IsEnemy = isEnemy
 
 -- "Jungle Bear": first name + surname (UnitName's second return on Forever)
 local function fullName(unit)

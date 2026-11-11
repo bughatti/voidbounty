@@ -26,10 +26,38 @@ function ns.Who(e)   -- "Warrior 36" in class colour
     return ("|c%s%s %s|r"):format(classColor(e.class), className(e.class), e.level and tostring(e.level) or "??")
 end
 
+-- one screen pixel in UI units (borders: never a fixed 1, feedback-pixel-perfect-borders)
+local function px()
+    local s = UIParent and UIParent:GetEffectiveScale()
+    if s and s > 0 and PixelUtil and PixelUtil.GetPixelToUIUnitFactor then return PixelUtil.GetPixelToUIUnitFactor() / s end
+    return 1
+end
+
+-- the red flashing box (the user, 11-11: "can we have it blink in a red flashing box"): it flashes for a
+-- few seconds when an enemy player shows up, and the whole time a player who killed you is near
+local FLASH_NEW = 6
+local flashUntil = 0
+
 local box
 local function build()
-    local f = CreateFrame("Frame", "VoidBountyAlert", UIParent)
+    local f = CreateFrame("Frame", "VoidBountyAlert", UIParent, "BackdropTemplate")
     f:SetSize(420, 20)
+    -- a dark background (the names stay readable) and a red border on its own layer: only the border
+    -- flashes (the user, 11-11: "i want a red border, the whole box red kind of interfers with names")
+    f:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8" })
+    f:SetBackdropColor(0.04, 0.02, 0.02, 0.8)
+    f.edge = CreateFrame("Frame", nil, f, "BackdropTemplate")
+    f.edge:SetAllPoints()
+    f.edge:SetBackdrop({ edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 3 * px() })
+    f.edge:SetBackdropBorderColor(1, 0.1, 0.1, 1)
+    f.pulse = f.edge:CreateAnimationGroup()
+    f.pulse:SetLooping("BOUNCE")
+    local a = f.pulse:CreateAnimation("Alpha")
+    a:SetFromAlpha(1)
+    a:SetToAlpha(0.1)
+    a:SetDuration(0.35)
+    a:SetSmoothing("IN_OUT")
+    f.pulse:SetScript("OnStop", function() f.edge:SetAlpha(1) end)
     f:SetFrameStrata("HIGH")
     f:SetClampedToScreen(true)
     local p = ns.char().alertPos
@@ -39,7 +67,7 @@ local function build()
     f.lines = {}
     for i = 1, MAX_MARKED + 1 do
         local fs = f:CreateFontString(nil, "OVERLAY", i <= MAX_MARKED and "GameFontNormalLarge" or "GameFontHighlight")
-        fs:SetPoint("TOP", f, "TOP", 0, -(i - 1) * 22)
+        fs:SetPoint("TOP", f, "TOP", 0, -8 - (i - 1) * 22)
         fs:SetShadowOffset(1, -1)
         fs:SetWidth(600)
         fs:SetWordWrap(false)
@@ -91,12 +119,20 @@ local function render()
         box.lines[i]:Show()
     end
     for k = i + 1, #box.lines do box.lines[k]:Hide() end
-    box:SetHeight(math.max(20, i * 22))
+    local w = 0
+    for k = 1, i do w = math.max(w, box.lines[k]:GetStringWidth() or 0) end
+    box:SetSize(math.min(640, w + 32), math.max(20, i * 22) + 12)
+    -- flash: a player who killed you is near, or someone just showed up; else a steady red box
+    local flash = c.flash ~= false and (#marked > 0 or GetTime() < flashUntil)
+    if flash and not box.pulse:IsPlaying() then box.pulse:Play()
+    elseif not flash and box.pulse:IsPlaying() then box.pulse:Stop() end
     box:Show()
 end
+ns.FlashAlert = function(secs) flashUntil = math.max(flashUntil, GetTime() + (secs or FLASH_NEW)) end
 ns.RenderAlert = render
 
 ns.OnChange(function(what, guid, isNew)
+    if what == "near" and isNew then flashUntil = GetTime() + FLASH_NEW end
     if what == "near" and isNew and ns.IsMarked(guid) and not ns.InBattle() and not guid:find("^Player%-0%-") then
         local e = ns.db().seen[guid]
         ns.Log("marked", ("%s showed up (alerts %s, sound %s)"):format(e and e.name or "?", tostring(ns.char().alerts), tostring(ns.char().sound)))
@@ -106,4 +142,4 @@ ns.OnChange(function(what, guid, isNew)
     end
     render()
 end)
-C_Timer.NewTicker(2, render)   -- people drop off after ns.NEAR_FOR seconds
+C_Timer.NewTicker(1, render)   -- people drop off after ns.NEAR_FOR seconds; the flash stops on time
