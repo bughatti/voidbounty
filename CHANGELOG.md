@@ -1,5 +1,9 @@
 # VoidBounty Changelog
 
+## 0.3.3 — 2026-11-12
+
+- **Fixed: a side of a box could be missing**, e.g. the right line of the recipes box and its buttons when the game window is an odd number of pixels wide. Every Void box now always shows all four border lines.
+
 ## 0.3.2 — 2026-11-12
 
 - **The warning box moves with a plain drag** (it needed Shift) and stays where you put it, even after a restart; the other VoidBounty boxes too.
