@@ -1,4 +1,4 @@
-# VoidBounty
+# VoidBounty - World PvP Enemy Alert & Kill List
 
 **Works on:** WoW Forever
 

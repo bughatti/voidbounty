@@ -241,6 +241,7 @@ local function dialog(name, w, h)
     f:RegisterForDrag("LeftButton")
     f:SetScript("OnDragStart", f.StartMoving)
     f:SetScript("OnDragStop", f.StopMovingOrSizing)
+    ns.Move(f, { db = ns.realDB, key = name })   -- kept after a restart (VoidMove.lua)
     f.title = fs(f, "GameFontNormal"); f.title:SetPoint("TOPLEFT", 10, -8); f.title:SetTextColor(A[1], A[2], A[3])
     local close = CreateFrame("Button", nil, f, "UIPanelCloseButton")
     close:SetSize(22, 22); close:SetPoint("TOPRIGHT", 1, 1)
@@ -955,13 +956,13 @@ local function build()
     f:SetMovable(true)
     f:EnableMouse(true)
     f:RegisterForDrag("LeftButton")
-    local p = ns.char().bigPos
+    local p = ns.realChar().bigPos
     if p then f:SetPoint(p[1], UIParent, p[2], p[3], p[4]) else f:SetPoint("CENTER", UIParent, "CENTER", 0, 40) end
     f:SetScript("OnDragStart", f.StartMoving)
     f:SetScript("OnDragStop", function(self)
         self:StopMovingOrSizing()
         local pt, _, rel, x, y = self:GetPoint()
-        ns.char().bigPos = { pt, rel, x, y }
+        ns.realChar().bigPos = { pt, rel, x, y }
     end)
     _G.VoidBountyFrame = f
     table.insert(UISpecialFrames, "VoidBountyFrame")

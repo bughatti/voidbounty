@@ -59,11 +59,7 @@ local function build()
     a:SetSmoothing("IN_OUT")
     f.pulse:SetScript("OnStop", function() f.edge:SetAlpha(1) end)
     f:SetFrameStrata("HIGH")
-    f:SetClampedToScreen(true)
-    local p = ns.char().alertPos
-    if p then f:SetPoint(p[1], UIParent, p[2], p[3], p[4]) else f:SetPoint("TOP", UIParent, "TOP", 0, -150) end
-    f:SetMovable(true)
-    f:EnableMouse(false)
+    f:SetPoint("TOP", UIParent, "TOP", 0, -150)
     f.lines = {}
     for i = 1, MAX_MARKED + 1 do
         local fs = f:CreateFontString(nil, "OVERLAY", i <= MAX_MARKED and "GameFontNormalLarge" or "GameFontHighlight")
@@ -73,18 +69,17 @@ local function build()
         fs:SetWordWrap(false)
         f.lines[i] = fs
     end
-    -- Shift-drag to move: the box takes the mouse only while Shift is held
-    f:SetScript("OnUpdate", function(self)
-        local want = IsShiftKeyDown() and self:IsShown()
-        if want ~= self:IsMouseEnabled() then self:EnableMouse(want) end
-    end)
-    f:RegisterForDrag("LeftButton")
-    f:SetScript("OnDragStart", function(self) if IsShiftKeyDown() then self:StartMoving() end end)
-    f:SetScript("OnDragStop", function(self)
-        self:StopMovingOrSizing()
-        local pt, _, rel, x, y = self:GetPoint()
-        ns.char().alertPos = { pt, rel, x, y }
-    end)
+    -- Drag to move, saved account-wide (the user, 11-12: the Shift-drag was never found, "the
+    -- faction box i cant move"). A spot set with the old Shift-drag is carried over once.
+    local db = ns.realDB()
+    if type(db) == "table" and not (db.positions and db.positions.alert) then
+        local old = ns.realChar().alertPos
+        if type(old) == "table" and old[1] then
+            db.positions = db.positions or {}
+            db.positions.alert = { old[1], old[2], old[3], old[4] }
+        end
+    end
+    ns.Move(f, { db = ns.realDB, key = "alert" })
     f:Hide()
     return f
 end

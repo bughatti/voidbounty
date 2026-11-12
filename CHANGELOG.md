@@ -1,5 +1,11 @@
 # VoidBounty Changelog
 
+## 0.3.2 — 2026-11-12
+
+- **The warning box moves with a plain drag** (it needed Shift) and stays where you put it, even after a restart; the other VoidBounty boxes too.
+- **The players-here box:** its tooltip no longer covers the box while you drag it, and it opens above or below the box depending on where the box sits on screen.
+- The Void hub's info window now stays where you put it.
+
 ## 0.3.1
 
 - **Your kills:** every honorable kill on an enemy player in the open world is listed under Most wanted, with who it was, their class and level, when and where. Your own list, never sent anywhere. Battleground and dungeon kills are counted on their own.
