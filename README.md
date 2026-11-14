@@ -2,6 +2,8 @@
 
 **Works on:** WoW Forever
 
+> **⚠ Update to 0.3.4 now.** VoidBounty's sharing moved to a new channel that is much harder to break: on the old one, a griefer could shut players out of sharing for the rest of the day. Version 0.3.3 and older can't reach players who updated, so until you update you won't get their sightings and they won't get yours.
+
 **Beta:** new, and it gets better with every player who runs it: each one is another pair of eyes for your side.
 
 **Know when enemy players are near, remember who killed you, and see who's hunting your side.**
@@ -41,7 +43,8 @@ World PvP in WoW Forever: VoidBounty warns you when enemy players are around, pu
 - Wanted posters on the players who killed you, hunters who take them on, and a reward paid in basic vendor goods (never gold). Being tested now; it arrives in an update. The players who kill you today will still be on your list
 
 ### Its own network
-- VoidBounty players of your faction find each other through a hidden chat channel (one per faction) with a password that changes every day. Messages go by hidden addon whispers
+- VoidBounty players of your faction find each other through a hidden chat channel (one per faction) whose name and password change every hour. Messages go by hidden addon whispers
+- **Hard to break:** if a stranger takes the channel over or bans you from it, everyone moves to a backup channel within about a minute and a half, and sharing carries on by whisper with the players you heard from in the last hour. Anyone who bans or kicks a player there is avoided for the rest of your session
 - What's shared: an enemy player's name, the game's ID for that player, level, class, guild, zone and a rough area of the zone (never a live position), at most once every 3 minutes per player. **Share my sightings** and **Share my deaths** in Settings turn each off
 - The Void **Players online** box shows how many VoidBounty players are on the network right now
 

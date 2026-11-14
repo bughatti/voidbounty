@@ -1,5 +1,16 @@
 # VoidBounty Changelog
 
+## 0.3.4 — 2026-11-14
+
+- **Sharing is much harder to break.** VoidBounty's hidden sharing channel could be taken over: whoever joins it first owns it and can ban players, which shut a player out for the rest of the day. Now:
+  - the channel has a code name and changes every hour, so a ban lasts an hour at most;
+  - VoidBounty checks who owns the channel. If the owner isn't a VoidBounty player, or the game won't let you in, everyone moves to a backup channel within about a minute and a half;
+  - when a VoidBounty player who owns the channel logs out, it hands the channel to another VoidBounty player, so a stranger doesn't get it;
+  - **sharing carries on without the channel:** the channel only finds players, so even if you're shut out, VoidBounty keeps sharing with the players it heard from in the last hour;
+  - anyone who bans or kicks a player from the channel, changes its password or hands out moderator rights is avoided for the rest of your session: VoidBounty never trusts them, never shares with them and never hands them the channel, and if they own it, everyone leaves it at once.
+- The channel's join and leave lines stay out of your chat.
+- Bans, owner changes and password changes on the channel are written down, with who did them (`/vbounty net` shows the owner).
+
 ## 0.3.3 — 2026-11-12
 
 - **Fixed: a side of a box could be missing**, e.g. the right line of the recipes box and its buttons when the game window is an odd number of pixels wide. Every Void box now always shows all four border lines.

@@ -75,4 +75,5 @@ function B.Receive(msg, sender, me)
     B.people[sender] = (B.people[sender] or 0) + 1
     local ok, err = pcall(fn, f, sender)
     if not ok and ns.debug then ns.say("bad message from " .. sender .. ": " .. tostring(err)) end
+    return ok   -- accepted (Net.lua counts only these as proof the sender runs VoidBounty)
 end
