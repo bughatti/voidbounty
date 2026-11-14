@@ -61,9 +61,9 @@ local peers = {}           -- [name] = time we last got a VoidBounty message fro
 local seen = {}            -- [name] = time they were in our channel at a member-list read
 local answered = {}        -- [name] = time we last answered their ping
 -- Hostile (the user, 2026-11-14, "yes build both"): a player the game says banned or kicked
--- someone in our channel, changed its password or got moderator status from an owner that
--- isn't us. VoidBounty never does any of that, and the server names who did it, so it can't be
--- forged. Never trusted, never answered, never handed the channel, never whispered; owning a
+-- someone in our channel or changed its password. VoidBounty never does either, and the server
+-- names who did it, so it can't be forged. (Not moderator changes: the server makes those
+-- itself when an owner leaves, see noteHostile.) Never trusted, never answered, never handed the channel, never whispered; owning a
 -- channel = everyone leaves it at once. This session only (names aren't saved).
 local hostile = {}         -- [name] = reason
 local G = { }              -- the guard's state, for /vbounty net and the tests
@@ -363,9 +363,10 @@ local function noteHostile(kind, a2, a5)
         who, why = a5, kind == "PLAYER_BANNED" and "banned " .. tostring(a2) or "kicked " .. tostring(a2)
     elseif kind == "PASSWORD_CHANGED" then
         who, why = a2, "changed the password"
-    elseif kind == "SET_MODERATOR" and owner and owner ~= me then
-        who, why = owner, "made " .. tostring(a2) .. " a moderator"
     end
+    -- NOT SET_MODERATOR (live 11-14, 0.3.4 bug): the server itself names a moderator when the owner
+    -- leaves ("SET_MODERATOR Vede", then "OWNER_CHANGED Vede Tinkerline" at the hourly switch), so
+    -- the departing VoidBounty owner was marked hostile and the network split every hour.
     who = Net.Canon(who)
     if not who or who == me or hostile[who] then return end
     hostile[who] = why

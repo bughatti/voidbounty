@@ -2,7 +2,7 @@
 
 **Works on:** WoW Forever
 
-> **⚠ Update to 0.3.4 now.** VoidBounty's sharing moved to a new channel that is much harder to break: on the old one, a griefer could shut players out of sharing for the rest of the day. Version 0.3.3 and older can't reach players who updated, so until you update you won't get their sightings and they won't get yours.
+> **⚠ Update to 0.3.5 now.** VoidBounty's sharing moved to a new channel that is much harder to break: on the old one, a griefer could shut players out of sharing for the rest of the day. Version 0.3.3 and older can't reach players who updated, so until you update you won't get their sightings and they won't get yours. 0.3.5 also fixes 0.3.4 splitting players into different channels every hour.
 
 **Beta:** new, and it gets better with every player who runs it: each one is another pair of eyes for your side.
 

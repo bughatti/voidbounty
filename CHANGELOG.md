@@ -1,5 +1,9 @@
 # VoidBounty Changelog
 
+## 0.3.5 — 2026-11-14
+
+- **Fixed: players split into different channels every hour.** When the channel's owner left at the hourly switch, the game made the next player a moderator, and 0.3.4 took that as a griefer and moved away from the old owner. Moderator changes no longer count, only bans, kicks and password changes.
+
 ## 0.3.4 — 2026-11-14
 
 - **Sharing is much harder to break.** VoidBounty's hidden sharing channel could be taken over: whoever joins it first owns it and can ban players, which shut a player out for the rest of the day. Now:
