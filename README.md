@@ -10,6 +10,8 @@
 
 World PvP in WoW Forever: VoidBounty warns you when enemy players are around, puts whoever kills you on a list, turns the warning red when they come back, and shares what you see with the other VoidBounty players of your faction.
 
+**Two kill lists:** **Blood debts**, the enemy players who killed you, and **Your kills**, the ones you killed.
+
 ---
 
 ## Features
