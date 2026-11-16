@@ -1,5 +1,9 @@
 # VoidBounty Changelog
 
+## 0.3.6 — 2026-11-16
+
+- **Fixed: the VoidGPS search bar drew over the VoidBounty window.** The window now sits with the other Void windows, opens in front, and comes forward when you click it.
+
 ## 0.3.5 — 2026-11-14
 
 - **Fixed: players split into different channels every hour.** When the channel's owner left at the hourly switch, the game made the next player a moderator, and 0.3.4 took that as a griefer and moved away from the old owner. Moderator changes no longer count, only bans, kicks and password changes.
