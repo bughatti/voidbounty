@@ -20,7 +20,7 @@ World PvP in WoW Forever: VoidBounty warns you when enemy players are around, pu
 - A red box near the top of the screen while enemy players are around: **"3 Alliance nearby: Warrior 36, Mage 34, Druid 30"**. It **flashes** for a few seconds when someone shows up (**Flash the warning** in Settings turns that off)
 - A player who killed you gets a **red line of their own**, with a warning sound when they show up, and the box keeps flashing while they're near
 - Enemy players are seen from nameplates, your target and your mouse, in the open world (battlegrounds hide who players are, so it stays quiet there)
-- Shift-drag the line to move it
+- Drag the box to move it; it stays where you put it, even after a restart
 
 ### Blood debts: who killed you
 - When an enemy player kills you, VoidBounty reads the death recap and puts the killer on your **Blood debts** list: how many times, where, when you last saw them
