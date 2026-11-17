@@ -2,7 +2,7 @@
 
 **Works on:** WoW Forever
 
-> **⚠ Update to 0.3.5 now.** VoidBounty's sharing moved to a new channel that is much harder to break: on the old one, a griefer could shut players out of sharing for the rest of the day. Version 0.3.3 and older can't reach players who updated, so until you update you won't get their sightings and they won't get yours. 0.3.5 also fixes 0.3.4 splitting players into different channels every hour.
+> **New: VoidNet.** VoidBounty now shares one hidden channel with every Void addon (VoidLayer, VoidSweep, VoidQuest, VoidGather, VoidDungeon), so more players of your side are in reach and the channel is harder to break. Older VoidBounty versions are still reached until they update.
 
 **Beta:** new, and it gets better with every player who runs it: each one is another pair of eyes for your side.
 
@@ -44,11 +44,17 @@ World PvP in WoW Forever: VoidBounty warns you when enemy players are around, pu
 ### Bounties: coming soon
 - Wanted posters on the players who killed you, hunters who take them on, and a reward paid in basic vendor goods (never gold). Being tested now; it arrives in an update. The players who kill you today will still be on your list
 
-### Its own network
-- VoidBounty players of your faction find each other through a hidden chat channel (one per faction) whose name and password change every hour. Messages go by hidden addon whispers
-- **Hard to break:** if a stranger takes the channel over or bans you from it, everyone moves to a backup channel within about a minute and a half, and sharing carries on by whisper with the players you heard from in the last hour. Anyone who bans or kicks a player there is avoided for the rest of your session
+### VoidNet: one network for every Void addon
+- VoidBounty, VoidLayer, VoidSweep, VoidQuest, VoidGather and VoidDungeon players of your faction find each other through **one** hidden chat channel whose name and password change every hour, with backups. Messages go by hidden addon whispers
+- **Hard to break:** if someone takes the channel over, bans or kicks Void players or changes its password, everyone moves to a backup within about a minute and a half, and sharing carries on by whisper with the Void players you heard from lately. That player is ignored for 24 hours (a report from others counts only when 3 different Void players saw it). Nothing is shown as a list of names
+- **Kept on your computer:** the Void players you heard from in the last 2 hours (names and a time, deleted after 2 hours, never shown or shared) and players marked for attacking the channel (24 hours)
 - What's shared: an enemy player's name, the game's ID for that player, level, class, guild, zone and a rough area of the zone (never a live position), at most once every 3 minutes per player. **Share my sightings** and **Share my deaths** in Settings turn each off
-- The Void **Players online** box shows how many VoidBounty players are on the network right now
+- The Void **Players online** box shows **VoidNet**: every Void addon player of your side online, each counted once
+- Older VoidBounty versions are still reached through the old channel, which goes 30 days after the last one updates
+
+### Helping other players change layer
+- VoidBounty carries the Void layer helper: when a Void player on your layer asks (from VoidLayer or VoidSweep), you send them a quick group invite that ends on its own, only while you're solo and out of combat. A short pop-up says so once
+- **Help others change layer** in the Settings tab turns it off. It's one switch for every Void addon, the same as the hub's **Help Void layer hopping**
 
 ---
 
@@ -61,7 +67,7 @@ You rarely need them: open it from the Void hub button on the minimap.
 | `/vbounty` | Open or close the window |
 | `/vbounty mark` | Put your target on Blood debts |
 | `/vbounty test` | A made-up enemy "Test Dummy" near you, to see the warning (`/vbounty untest` removes it) |
-| `/vbounty net` | Check that messages to other VoidBounty players get through |
+| `/vbounty net` | Check that messages to other Void players get through |
 
 ---
 

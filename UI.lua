@@ -878,6 +878,8 @@ local function buildSettings(parent)
         ns.KILLS and { "autolog", "Auto combat log", "On while you're PvP-flagged in the world (it's how your kills are proven), off 5 minutes after. Never touches a log something else started.", true } or nil,
         { "shareSeen", "Share my sightings with my side", "Enemy players you see are sent to other VoidBounty players of your faction (name, level, class, zone and a rough area, never a live position)." },
         { "shareDeaths", "Share my deaths (notoriety)", "When an enemy player kills you, your side hears \"killed by X\". That builds Most wanted. Your own name isn't stored by anyone." },
+        -- "Help others change layer": ONE switch for every Void addon (LayerHelp.lua), not a per-character key here
+        (rawget(_G, "VoidLayerHelp") and rawget(_G, "VoidLayerCore")) and { "layerHelp", VoidLayerHelp.LABEL, VoidLayerHelp.TIP, true, VoidLayerHelp } or nil,
     }
     do   -- drop the nil hole (autolog when writs are off)
         local packed = {}
@@ -892,11 +894,12 @@ local function buildSettings(parent)
         c.desc = fs(c, "GameFontDisableSmall", CW - 40); c.desc:SetPoint("TOPLEFT", c.label, "BOTTOMLEFT", 0, -2); c.desc:SetText(o[3])
         c:SetScript("OnClick", function(self)
             local on = self:GetChecked() and true or false
+            if o[5] then o[5].Set(on) return end   -- the shared layer switch
             ns.char()[o[1]] = on
             if o[1] == "autolog" and on then ns.LogState() end
             ns.RenderAlert()
         end)
-        c.key, c.defaultOn = o[1], o[4]
+        c.key, c.defaultOn, c.shared = o[1], o[4], o[5]
         s.checks[i] = c
     end
     s.test = button(s, "Test the warning", 140, 22)
@@ -1065,7 +1068,8 @@ Refresh = function()
     elseif current == "settings" then
         for _, c in ipairs(pages.settings.checks) do
             local v = ns.char()[c.key]
-            if c.defaultOn then c:SetChecked(v ~= false) else c:SetChecked(v and true or false) end
+            if c.shared then c:SetChecked(c.shared.On())
+            elseif c.defaultOn then c:SetChecked(v ~= false) else c:SetChecked(v and true or false) end
         end
     end
 end

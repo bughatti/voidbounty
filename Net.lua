@@ -19,13 +19,18 @@ local OLD_TAG = "VoidBounty"   -- 0.x's daily channel (left at login)
 local HOUR = 3600
 local function hourNow() return math.floor(((GetServerTime and GetServerTime()) or time()) / HOUR) end
 local SPREAD = 12          -- members one network message goes to
-local GAP = 0.35           -- seconds between whispers
+local GAP = 1.1            -- seconds between whispers (was 0.35; the game allows ~1 a second per prefix:
+                           -- vnet-sim 2026-11-16 showed faster pacing gets sends refused)
+-- VoidNet (2026-11-17): one channel for every Void addon, with this file's guard moved INTO it. When VoidNet is
+-- loaded (it ships in VoidBounty from now on), VoidBounty uses its channel and protection; the old "Vb" hourly
+-- channel stays for older versions 30 days after the last one. Without it (the tests), the guard below runs.
+local vnMode = false
 
 ----------------------------------------------------------------------
 -- The owner guard (the user, 2026-11-14: "communicate who is owner and force giving owner over").
 -- Only a channel's owner (and moderators the owner names) can ban, and only the owner can hand
 -- ownership over (SetChannelOwner from addon code on a timer works on Forever: probed live 11-14,
--- "Owner changed to Death Bobb"). Nobody can take it. So:
+-- "Owner changed to Ana Brightwood"). Nobody can take it. So:
 --   * keep it: an owner that is leaving (logout / reload) hands it to a VoidBounty player in the
 --     channel who has talked on the network; VoidBounty never names moderators, so while one of
 --     ours owns the channel nobody can be banned;
@@ -337,6 +342,14 @@ local function readySuccessor()
 end
 
 local function publish()
+    if vnMode then
+        -- VoidNet: its core guards the channel; the box shows "VoidNet" (the one channel), not "VoidBounty online"
+        if _G.VoidPresence and net then
+            local v = net:Void()
+            _G.VoidPresence:Set("VoidNet", "VoidNet", v or 0, false, v ~= nil, Net.BlockNote(CHANNEL))
+        end
+        return
+    end
     if net then
         if reading then
             local now = time()
@@ -365,7 +378,7 @@ local function noteHostile(kind, a2, a5)
         who, why = a2, "changed the password"
     end
     -- NOT SET_MODERATOR (live 11-14, 0.3.4 bug): the server itself names a moderator when the owner
-    -- leaves ("SET_MODERATOR Vede", then "OWNER_CHANGED Vede Tinkerline" at the hourly switch), so
+    -- leaves ("SET_MODERATOR Ana", then "OWNER_CHANGED Ana Brightwood" at the hourly switch), so
     -- the departing VoidBounty owner was marked hostile and the network split every hour.
     who = Net.Canon(who)
     if not who or who == me or hostile[who] then return end
@@ -415,6 +428,12 @@ end)
 
 function ns.NetOthers() return net and net:Others() end
 function ns.NetReport()
+    if vnMode and net then
+        local o = net:Others()
+        ns.say(("network: %s other VoidBounty player%s online · sent %d, heard %d."):format(o and tostring(o) or "?", o == 1 and "" or "s", ns.Bus.sent, ns.Bus.heard))
+        for _, line in ipairs(net.core:Report()) do ns.say(line) end
+        return
+    end
     local o = net and net:Others()
     ns.say(("network: %s other VoidBounty player%s online · sent %d, heard %d from %d player%s."):format(
         o and tostring(o) or "?", o == 1 and "" or "s", ns.Bus.sent, ns.Bus.heard,
@@ -438,6 +457,9 @@ f:RegisterEvent("CHAT_MSG_ADDON")
 f:RegisterEvent("CHAT_MSG_CHANNEL_NOTICE")
 f:RegisterEvent("CHAT_MSG_CHANNEL_NOTICE_USER")
 f:SetScript("OnEvent", function(_, ev, prefix, msg, dist, sender, a5, _, _, _, a9)
+    if vnMode and (ev == "CHAT_MSG_CHANNEL_NOTICE_USER" or ev == "CHAT_MSG_CHANNEL_NOTICE" or ev == "PLAYER_LOGOUT") then
+        return   -- VoidNet's core watches the channel, the owner and the hand-over
+    end
     if ev == "CHAT_MSG_CHANNEL_NOTICE_USER" then
         -- arg1 = what ("PLAYER_BANNED", "OWNER_CHANGED", "CHANNEL_OWNER", ...), arg2 = the player
         -- it names, arg5 = the second one ("x banned y"), arg9 = the channel
@@ -464,6 +486,29 @@ f:SetScript("OnEvent", function(_, ev, prefix, msg, dist, sender, a5, _, _, _, a
     end
     if ev == "PLAYER_LOGIN" then
         if not (Net and Net.Active()) then return end
+        if ns.VoidNet then
+            vnMode = true
+            VoidBountyDB = VoidBountyDB or {}
+            net = ns.VoidNet.New({ prefix = PREFIX, legacy = { tag = TAG, salt = SALT, hourly = true }, db = VoidBountyDB,
+                                   onRoster = function() if publish then publish() end end })
+            CHANNEL = net:Channel()
+            G.channel, G.slot = CHANNEL, 0
+            me = Net.Me()
+            ns.Me = me
+            C_ChatInfo.RegisterAddonMessagePrefix(PREFIX)
+            ns.Bus.transport = transport
+            C_Timer.After(9, function()
+                net:Join()
+                C_Timer.After(3, function()
+                    net:RequestRoster(true)
+                    C_Timer.After(5, function() publish(); if ns.OnNetReady then ns.OnNetReady() end end)
+                end)
+            end)
+            C_Timer.NewTicker(300, function() net:RequestRoster(false); publish() end)
+            if _G.VoidPresence then _G.VoidPresence:Listen(function() net:RequestRoster(true); publish() end) end
+            C_Timer.NewTicker(60, function() if net:Day() then CHANNEL = net:Channel(); publish() end end)
+            return
+        end
         local hour = hourNow()
         -- after a /reload: the backup of this hour we were on
         local kept = type(VoidBountyDB) == "table" and type(VoidBountyDB.netSlot) == "table" and VoidBountyDB.netSlot
@@ -514,6 +559,7 @@ f:SetScript("OnEvent", function(_, ev, prefix, msg, dist, sender, a5, _, _, _, a
     elseif ev == "CHAT_MSG_ADDON" then
         if prefix ~= PREFIX or dist ~= "WHISPER" then return end
         local who = ns.Bus.CleanName(Net.Canon(sender))
+        if vnMode and who and net:Heard(who) == false then return end   -- hostile (VoidNet): dropped
         G.knewSender = who and freshPeer(who) or false
         local accepted = ns.Bus.Receive(msg, Net.Canon(sender), me)
         G.knewSender = nil
