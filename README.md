@@ -2,7 +2,7 @@
 
 **Works on:** WoW Forever
 
-> **New: VoidNet.** VoidBounty now shares one hidden channel with every Void addon (VoidLayer, VoidSweep, VoidQuest, VoidGather, VoidDungeon), so more players of your side are in reach and the channel is harder to break. Older VoidBounty versions are still reached until they update.
+> **New: VoidNet.** All six Void network addons (VoidLayer, VoidSweep, VoidQuest, VoidGather, VoidBounty, VoidDungeon) now share one channel on WoW Forever, so you reach more players. Versions from before November 10, 2026 can't share at all: please update (the CurseForge app does it for you).
 
 **Beta:** new, and it gets better with every player who runs it: each one is another pair of eyes for your side.
 
