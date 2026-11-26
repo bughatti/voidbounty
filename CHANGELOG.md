@@ -1,5 +1,9 @@
 # VoidBounty Changelog
 
+## 0.4.3 — 2026-11-25
+
+- **VoidHub window (WoW Forever):** right-click the VoidHub minimap button (or type /vhub) for every Void addon in one window: quests, layers, gear, gold, professions, combat, dungeons and more, each drawn from its own addon, with a Start page for what to do right now. Addons you don't have show a screenshot and how to get them. Shift + right-click opens Copy settings from another character. It comes inside every Void addon: nothing extra to install.
+
 ## 0.4.2 — 2026-11-24
 
 - **Layers work again after the game's November 20 update (WoW Forever).** The update gave every NPC a number of its own, so the layer read off the NPCs around you kept jumping. The layer engine every Void addon shares (from VoidLayer 0.6.0) now names your layer itself and lets the game keep the name right: a world refresh or a hop gives you a new name, Void players who turn out to be on one layer take one name, and a layer hop turns down an invite from a helper who's on your layer already.

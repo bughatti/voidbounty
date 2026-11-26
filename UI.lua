@@ -1122,3 +1122,50 @@ table.insert(VoidHubToggles, {
     get = function() return ns.char().alerts end,
     set = function(on) ns.char().alerts = on; ns.RenderAlert() end,
 })
+
+----------------------------------------------------------------------
+-- Read-only hooks for the all-in-one VoidHub window (2026-11-24): the hub's VoidBounty pages show the same lists
+-- (the item builders above), the same settings (same per-character keys and the shared layer switch) and the same
+-- "danger here" line. Nothing here changes this window.
+----------------------------------------------------------------------
+_G.VoidBountyHub = {
+    NAV = function() return ns.WRITS and NAV_FULL or NAV_SOON end,
+    Items = { debts = debtsItems, hunts = huntsItems, ledger = ledgerItems, sightings = sightingsItems, hall = hallItems },
+    ClassIcon = classIcon,
+    OnChange = ns.OnChange,
+    Writs = function() return ns.WRITS end,
+    Char = function() return ns.char() end,
+    RenderAlert = function() ns.RenderAlert() end,
+    LogState = function() if ns.LogState then ns.LogState() end end,
+    Test = function() ns.Test(); C_Timer.After(25, function() ns.Unmark("Player-0-TEST0001"); ns.db().seen["Player-0-TEST0001"] = nil; ns.RenderAlert() end) end,
+    MarkTarget = function() ns.MarkTarget() end,
+    -- the settings, as the Settings page lists them: { key, label, tip, defaultOn, sharedSwitch }
+    Options = function()
+        local o = {
+            { "alerts", "Nearby warning", "A small line near the top of the screen while enemy players are around (Shift-drag it to move it). Red for players who killed you." },
+            { "sound", "Sound for Marked and Tracked players", "A warning sound when a player who killed you shows up, or a tracked player is spotted." },
+            { "flash", "Flash the warning", "The warning box flashes red for a few seconds when an enemy player shows up, and the whole time a player who killed you is near.", true },
+            { "quiet", "Show unmarked enemies too", "One quiet line for other enemy players: \"3 Alliance nearby: ...\"." },
+        }
+        if ns.KILLS then o[#o + 1] = { "autolog", "Auto combat log", "On while you're PvP-flagged in the world (it's how your kills are proven), off 5 minutes after. Never touches a log something else started.", true } end
+        o[#o + 1] = { "shareSeen", "Share my sightings with my side", "Enemy players you see are sent to other VoidBounty players of your faction (name, level, class, zone and a rough area, never a live position)." }
+        o[#o + 1] = { "shareDeaths", "Share my deaths (notoriety)", "When an enemy player kills you, your side hears \"killed by X\". That builds Most wanted. Your own name isn't stored by anyone." }
+        if rawget(_G, "VoidLayerHelp") and rawget(_G, "VoidLayerCore") then o[#o + 1] = { "layerHelp", VoidLayerHelp.LABEL, VoidLayerHelp.TIP, true, VoidLayerHelp } end
+        return o
+    end,
+    -- "Danger here" (the window's left column) and the network line
+    Danger = function()
+        local here, n, lo, hi = GetZoneText and GetZoneText() or "", 0, 99, 0
+        for _, z in ipairs(ns.ZoneDanger(900)) do
+            if z.zone == here then n, lo, hi = z.n, z.lvlMin, z.lvlMax end
+        end
+        local level = n == 0 and "|cff55ff55quiet|r" or n < 3 and "|cffffd27asome|r" or n < 7 and "|cffff9944high|r" or "|cffff3333very high|r"
+        return ("Danger here: %s  ·  %d enemy player%s seen in %s, last 15 min%s"):format(level, n, n == 1 and "" or "s", here,
+            hi > 0 and (" (levels %d-%d)"):format(lo, hi) or "")
+    end,
+    Net = function()
+        local others = ns.NetOthers and ns.NetOthers()
+        return ("%s network · %s other VoidBounty player%s online"):format(UnitFactionGroup("player") or "?",
+            others and tostring(others) or "?", others == 1 and "" or "s")
+    end,
+}
