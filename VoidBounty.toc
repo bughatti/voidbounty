@@ -1,31 +1,10 @@
 ## Interface: 16001
-## Title: |cff00c7ffVoidBounty|r
-## Notes: WoW Forever world PvP: enemy players nearby, who killed you, sightings and tracking shared with your side
+## Title: |cff00c7ffVoidBounty|r |cff8c8c9e(now in VoidHonor)|r
+## Notes: VoidBounty is part of VoidHonor now. Keep this installed until VoidHonor has loaded once: it hands your blood debts, sightings and settings over
 ## Author: Vede
-## Version: 0.4.4
-## SavedVariables: VoidBountyDB, VoidPresenceDB
-## SavedVariablesPerCharacter: VoidBountyCharDB, VoidHubCharDB
-## IconTexture: Interface\Icons\INV_Misc_Note_02
+## Version: 0.5.0
+## SavedVariables: VoidBountyDB
+## SavedVariablesPerCharacter: VoidBountyCharDB
+## IconTexture: Interface\Icons\INV_Misc_Bone_HumanSkull_01
 
-WhisperNet.lua
-VoidNet.lua
-Layer.lua
-VoidLayerCore.lua
-LayerHelp.lua
-PresenceBox.lua
-VoidMove.lua
-TributeData.lua
-Kills.lua
-Core.lua
-Bus.lua
-Net.lua
-Alert.lua
-Writs.lua
-Tribute.lua
-KillProof.lua
-HonorKills.lua
-Demo.lua
-Route.lua
-UI.lua
-VoidHubBundle.lua
-Libs\VoidHub\VoidHub.xml
+Stub.lua
